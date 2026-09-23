@@ -75,7 +75,6 @@ component_registry/
 ├── tests/
 │   ├── end_to_end_test.cpp  # loads the real .so, exercises success and error paths
 │   └── CMakeLists.txt
-├── ports/component-registry/   # vcpkg overlay port (not yet populated)
 └── CMakeLists.txt
 ```
 
