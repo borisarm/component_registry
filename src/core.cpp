@@ -30,6 +30,7 @@ namespace component_registry {
 
     ReturnValue<void> ComponentRegistry::load_plugin(std::filesystem::path const& path)
     {
+        std::lock_guard<std::mutex> lock(mutex_);
 
         ::dlerror();
 
@@ -44,10 +45,15 @@ namespace component_registry {
             }
         }
 
-
-        std::lock_guard<std::mutex> lock(mutex_);
-        
+        loaded_plugins_.emplace_back(handle);
         return {};
+    }
+
+    [[nodiscard]] std::size_t ComponentRegistry::loaded_plugin_count() const
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return loaded_plugins_.size();
+
     }
 
 }
