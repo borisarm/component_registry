@@ -1,0 +1,67 @@
+## Build directories
+build/
+cmake-build-*/
+out/
+bin/
+obj/
+Debug/
+Release/
+debug/
+release/
+
+## CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+Makefile
+
+## Compiled objects and binaries
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+## Dependency and generated files
+*.d
+*.gch
+*.pch
+*.mod
+*.gcda
+*.gcno
+*.gcov
+
+## IDE and editor files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+.vs/
+
+## Tool and OS files
+.cache/
+.clangd/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+## Test and coverage output
+Testing/
+coverage/
+lcov.info
