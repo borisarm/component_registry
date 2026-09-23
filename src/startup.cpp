@@ -5,9 +5,7 @@
 
 namespace component_registry {
 
-namespace {
-
-    std::string_view code_name(ErrorCode code) {
+    std::string_view code_name(ErrorCode code) noexcept {
         switch (code) {
             case ErrorCode::component_not_found:       return "component_not_found";
             case ErrorCode::interface_mismatch:         return "interface_mismatch";
@@ -21,8 +19,6 @@ namespace {
         }
         return "unknown_error";
     }
-
-}  // namespace
 
     std::string StartupResolver::summary() const {
     if (errors_.empty()) {

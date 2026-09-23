@@ -18,6 +18,19 @@ inline std::filesystem::path example_server_path() {
     return std::filesystem::path{EXAMPLE_SERVER_PATH};
 }
 
+// Servers defectuosos de tests/support/servers, también inyectados por CMake.
+inline std::filesystem::path no_abi_symbol_server_path() {
+    return std::filesystem::path{NO_ABI_SYMBOL_SERVER_PATH};
+}
+
+inline std::filesystem::path no_register_symbol_server_path() {
+    return std::filesystem::path{NO_REGISTER_SYMBOL_SERVER_PATH};
+}
+
+inline std::filesystem::path incompatible_abi_server_path() {
+    return std::filesystem::path{INCOMPATIBLE_ABI_SERVER_PATH};
+}
+
 // Directorio temporal único que se borra al salir de ámbito.
 class TempDirectory {
 public:

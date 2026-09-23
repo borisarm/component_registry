@@ -2,11 +2,16 @@
 
 #include <span>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <component_registry/core.hpp>
 
 namespace component_registry {
+
+    // Nombre estable de un ErrorCode, tal como aparece en StartupResolver::summary().
+    // Valores fuera del enum se nombran "unknown_error".
+    [[nodiscard]] std::string_view code_name(ErrorCode code) noexcept;
 
     class StartupResolver {
         public:
