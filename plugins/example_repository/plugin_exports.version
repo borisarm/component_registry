@@ -1,0 +1,7 @@
+COMPONENT_PLUGIN_ABI_1 {
+    global:
+        component_plugin_abi_version;
+        component_plugin_register;
+    local:
+        *;
+};

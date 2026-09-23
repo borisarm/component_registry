@@ -32,7 +32,7 @@ namespace component_registry {
         component_not_found,
         interface_mismatch,
         duplicate_registration,
-        plugin_load_failure,
+        plugin_load_failed,
         plugin_symbol_missing,
         plugin_abi_incompatible,
         plugin_registration_failed,

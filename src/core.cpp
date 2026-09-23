@@ -39,9 +39,9 @@ namespace component_registry {
         {
             const char* error = ::dlerror();
             if(error){
-                return std::unexpected(Error { ErrorCode::plugin_load_failure, std::format("Failed to load plugin from path {}: {}", path.string(), error) });
+                return std::unexpected(Error { ErrorCode::plugin_load_failed, std::format("Failed to load plugin from path {}: {}", path.string(), error) });
             } else {
-                return std::unexpected(Error { ErrorCode::plugin_load_failure, std::format("Failed to load plugin from path {}: unknown error", path.string()) });
+                return std::unexpected(Error { ErrorCode::plugin_load_failed, std::format("Failed to load plugin from path {}: unknown error", path.string()) });
             }
         }
 
