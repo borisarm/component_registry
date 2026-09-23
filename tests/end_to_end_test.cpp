@@ -1,10 +1,3 @@
-// Test end-to-end del ciclo completo host -> server:
-//   1. El host NO enlaza example_repository_server en tiempo de compilación.
-//   2. Carga el .so en tiempo de ejecución vía ComponentRegistry::load_server.
-//   3. Resuelve IEchoService por ComponentId, sin conocer InMemoryEchoService.
-//   4. Verifica también los casos de error: componente inexistente e
-//      interfaz que no coincide con la implementación registrada.
-
 #include <memory>
 
 #include <gtest/gtest.h>
