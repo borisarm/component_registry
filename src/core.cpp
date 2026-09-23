@@ -1,5 +1,5 @@
 #include "component_registry/core.hpp"
-#include "component_registry/plugin_abi.hpp"
+#include "component_registry/server_abi.hpp"
 
 #include <format>
 #include <dlfcn.h>
@@ -29,7 +29,7 @@ namespace component_registry {
     }
 
 
-    ReturnValue<void> ComponentRegistry::load_plugin(std::filesystem::path const& path)
+    ReturnValue<void> ComponentRegistry::load_server(std::filesystem::path const& path)
     {
         // No se toma mutex_ aquí: component_plugin_register() llama a
         // register_factory(), que lo toma, y std::mutex no es recursivo.
@@ -38,52 +38,50 @@ namespace component_registry {
         if (!handle) {
             char const* reason = ::dlerror();
             return std::unexpected(Error{
-                ErrorCode::plugin_load_failed,
+                ErrorCode::server_load_failed,
                 path.string() + ": " + (reason ? reason : "razón desconocida")});
         }
 
-        auto abi_version_fn = reinterpret_cast<ComponentPluginAbiVersionFn>(
+        auto abi_version_fn = reinterpret_cast<ComponentServerAbiVersionFn>(
             ::dlsym(handle, k_abi_version_symbol));
-        auto register_fn = reinterpret_cast<ComponentPluginRegisterFn>(
+        auto register_fn = reinterpret_cast<ComponentServerRegisterFn>(
             ::dlsym(handle, k_register_symbol));
 
         if (!abi_version_fn || !register_fn) {
             ::dlclose(handle);  // nunca llegó a registrar nada: sí cerramos aquí
             return std::unexpected(Error{
-                ErrorCode::plugin_symbol_missing,
-                path.string() + ": faltan símbolos del contrato de plugin"});
+                ErrorCode::server_symbol_missing,
+                path.string() + ": faltan símbolos del contrato del servidor"});
         }
 
         if (abi_version_fn().abi_version != k_abi_version) {
             ::dlclose(handle);
             return std::unexpected(Error{
-                ErrorCode::plugin_abi_incompatible,
-                path.string() + ": ABI del plugin incompatible con la del host "
+                ErrorCode::server_abi_incompatible,
+                path.string() + ": ABI del servidor incompatible con la del host "
                 "(esperada " + std::to_string(k_abi_version) + ")"});
         }
 
         bool const registered = register_fn(*this);
 
-        // El handle se retiene aunque el registro haya fallado: el plugin pudo
-        // registrar algunas fábricas antes de devolver false, y esas fábricas
-        // apuntan a código del .so. Cerrarlo las dejaría colgando (ADR-0003).
+       
         {
             std::lock_guard lock(mutex_);
-            loaded_plugins_.push_back(handle);
+            loaded_servers_.push_back(handle);
         }
 
         if (!registered) {
             return std::unexpected(Error{
-                ErrorCode::plugin_registration_failed,
-                path.string() + ": component_plugin_register devolvió false"});
+                ErrorCode::server_registration_failed,
+                path.string() + ": component_server_register devolvió false"});
         }
         return {};
     }
 
-    [[nodiscard]] std::size_t ComponentRegistry::loaded_plugin_count() const
+    [[nodiscard]] std::size_t ComponentRegistry::loaded_servers_count() const
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        return loaded_plugins_.size();
+        return loaded_servers_.size();
 
     }
 

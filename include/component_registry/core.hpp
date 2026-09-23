@@ -32,10 +32,11 @@ namespace component_registry {
         component_not_found,
         interface_mismatch,
         duplicate_registration,
-        plugin_load_failed,
-        plugin_symbol_missing,
-        plugin_abi_incompatible,
-        plugin_registration_failed,
+        server_load_failed,
+        server_symbol_missing,
+        server_abi_incompatible,
+        server_registration_failed,
+        manifest_unreadable,
         unknown_error
     };
 
@@ -75,16 +76,16 @@ namespace component_registry {
             });
         }
 
-        [[nodiscard]] ReturnValue<void> load_plugin(std::filesystem::path const& path);
+        [[nodiscard]] ReturnValue<void> load_server(std::filesystem::path const& path);
 
 
-        [[nodiscard]] std::size_t loaded_plugin_count() const;
+        [[nodiscard]] std::size_t loaded_servers_count() const;
 
         private:
 
         mutable std::mutex mutex_;
         std::unordered_map<ComponentId, Factory> factories_;
-        std::vector<void *> loaded_plugins_; 
+        std::vector<void *> loaded_servers_; 
 
     };
 

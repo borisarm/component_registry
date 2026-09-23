@@ -1,4 +1,12 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 4.2)
+
+# Dependencias gestionadas por vcpkg en modo manifiesto (vcpkg.json).
+# Debe fijarse antes de project() para que el toolchain se aplique.
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        CACHE FILEPATH "vcpkg toolchain file")
+endif()
+
 project(component_registry
     VERSION 1.0
     LANGUAGES CXX
@@ -11,11 +19,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 option(COMPONENT_REGISTRY_BUILD_TESTS "Compile component registry tests" ON)
-option(COMPONENT_REGISTRY_BUILD_EXAMPLE_PLUGIN "Compile sample plugins" ON)
+option(COMPONENT_REGISTRY_BUILD_EXAMPLE_SERVER "Compile sample servers" ON)
 
 add_library(component_registry STATIC
     src/core.cpp
     src/startup.cpp
+    src/manifest.cpp
 )
 
 add_library(ComponentRegistry::component_registry ALIAS component_registry)
@@ -42,8 +51,8 @@ set_target_properties(component_registry PROPERTIES
 )
 
 
-if(COMPONENT_REGISTRY_BUILD_EXAMPLE_PLUGIN)
-    add_subdirectory(plugins/example_repository)
+if(COMPONENT_REGISTRY_BUILD_EXAMPLE_SERVER)
+    add_subdirectory(servers/example_repository)
 endif()
 
 

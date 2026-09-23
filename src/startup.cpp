@@ -12,10 +12,11 @@ namespace {
             case ErrorCode::component_not_found:       return "component_not_found";
             case ErrorCode::interface_mismatch:         return "interface_mismatch";
             case ErrorCode::duplicate_registration:     return "duplicate_registration";
-            case ErrorCode::plugin_load_failed:         return "plugin_load_failed";
-            case ErrorCode::plugin_symbol_missing:      return "plugin_symbol_missing";
-            case ErrorCode::plugin_abi_incompatible:    return "plugin_abi_incompatible";
-            case ErrorCode::plugin_registration_failed: return "plugin_registration_failed";
+            case ErrorCode::server_load_failed:         return "server_load_failed";
+            case ErrorCode::server_symbol_missing:      return "server_symbol_missing";
+            case ErrorCode::server_abi_incompatible:    return "server_abi_incompatible";
+            case ErrorCode::server_registration_failed: return "server_registration_failed";
+            case ErrorCode::manifest_unreadable:        return "manifest_unreadable";
             case ErrorCode::unknown_error:              return "unknown_error";
         }
         return "unknown_error";

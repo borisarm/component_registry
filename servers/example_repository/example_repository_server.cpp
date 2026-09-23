@@ -1,4 +1,4 @@
-#include "component_registry/plugin_abi.hpp"
+#include "component_registry/server_abi.hpp"
 #include "echo_service_interface.hpp"
 
 namespace {
@@ -11,7 +11,7 @@ public:
 };
 
 }  // namespace
-COMPONENT_REGISTRY_DEFINE_PLUGIN {
+COMPONENT_REGISTRY_DEFINE_SERVER {
     return registry
         .register_factory(
             "example.echo_service",
