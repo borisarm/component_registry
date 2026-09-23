@@ -44,8 +44,7 @@ TEST_F(EndToEndTest, CreateAsFailsForUnknownComponentId) {
 }
 
 TEST_F(EndToEndTest, CreateAsFailsForMismatchedInterface) {
-    // dynamic_pointer_cast a una interfaz no implementada por la clase
-    // concreta debe fallar de forma controlada, no crashear.
+
     class UnrelatedInterface : public cr::IComponent {
     public:
         virtual void unused() = 0;
