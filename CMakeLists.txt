@@ -20,6 +20,18 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 option(COMPONENT_REGISTRY_BUILD_TESTS "Compile component registry tests" ON)
 option(COMPONENT_REGISTRY_BUILD_EXAMPLE_SERVER "Compile sample servers" ON)
+option(COMPONENT_REGISTRY_ENABLE_COVERAGE "Instrument code for source-based coverage (Clang)" OFF)
+
+# Cobertura basada en fuente de Clang. Se aplica a todos los targets (librería,
+# server y tests); el target `coverage` de tests/ genera el informe.
+if(COMPONENT_REGISTRY_ENABLE_COVERAGE)
+    if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        message(FATAL_ERROR
+            "COMPONENT_REGISTRY_ENABLE_COVERAGE requiere Clang (compilador actual: ${CMAKE_CXX_COMPILER_ID})")
+    endif()
+    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+    add_link_options(-fprofile-instr-generate)
+endif()
 
 add_library(component_registry STATIC
     src/core.cpp

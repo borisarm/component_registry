@@ -32,6 +32,28 @@ Targets:
 |---|---|---|
 | `COMPONENT_REGISTRY_BUILD_EXAMPLE_PLUGIN` | `ON` | Builds `plugins/example_repository`. The `end_to_end` test is registered only when this is `ON`. |
 | `COMPONENT_REGISTRY_BUILD_TESTS` | `ON` | Builds `tests/` and enables CTest. |
+| `COMPONENT_REGISTRY_ENABLE_COVERAGE` | `OFF` | Instruments every target for Clang source-based coverage and adds the `coverage` target. Requires Clang. |
+
+## Code coverage
+
+Use a separate build directory, because instrumentation slows the build and
+the tests:
+
+```sh
+cmake -S . -B build-cov -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug \
+  -DCOMPONENT_REGISTRY_ENABLE_COVERAGE=ON
+cmake --build build-cov --target coverage
+```
+
+The `coverage` target builds the tests, runs CTest, merges the profiles with
+`llvm-profdata` and prints a per-file summary with `llvm-cov report`. It
+also writes an HTML report with per-line and per-branch detail to
+`build-cov/coverage/html/index.html`. The report covers the library,
+the public headers and the example server. It leaves out test sources and
+vcpkg dependencies.
+
+CMake looks for `llvm-profdata` and `llvm-cov` that match the Clang major
+version, such as `llvm-cov-21`, and falls back to the unversioned names.
 
 ## The end-to-end test
 
