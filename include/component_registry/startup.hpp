@@ -14,7 +14,7 @@ namespace component_registry {
                 : registry_(registry) {}
 
             template <typename Interface>
-            StartupResolver& require(ComponentId id, std::shared_ptr<Interface> out)  {
+            StartupResolver& require(ComponentId id, std::shared_ptr<Interface>& out)  {
                 auto result = registry_.create_as<Interface>(id);
                 if (result) {
                     out = std::move(*result);

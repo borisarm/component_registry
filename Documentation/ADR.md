@@ -14,14 +14,14 @@ The registry is the resolution mechanism a composition root uses for dependencie
 
 ## ADR-0003 — Load-once, no hot-reload (for now)
 
-Plugins are loaded once at process startup and live until the process exits; there is no `dlclose` of an in-use plugin anywhere in this version. This sidesteps the hardest problem of dynamic loading — coupling an object's reference count to its owning library's lifetime so a `.so` is never unmapped while live objects still point into it — because that problem only exists if unloading is supported. Hot-reload is explicitly out of scope and left for a future iteration; if it's ever added, the lifetime-coupling problem has to be solved first, as a prerequisite, not a follow-up.
+Plugins are loaded once at process startup and live until the process exits; there is no `dlclose` of an in-use plugin anywhere in this version. The only `dlclose` calls happen when a plugin is rejected before its register function runs (missing symbol, ABI mismatch). Once `component_plugin_register` has been called, the handle is kept even if it returned `false`, because it may already have registered factories. This sidesteps the hardest problem of dynamic loading — coupling an object's reference count to its owning library's lifetime so a `.so` is never unmapped while live objects still point into it — because that problem only exists if unloading is supported. Hot-reload is explicitly out of scope and left for a future iteration; if it's ever added, the lifetime-coupling problem has to be solved first, as a prerequisite, not a follow-up.
 
 ## ADR-0004 — No exceptions across the public API
 
 Every operation that can fail (`register_factory`, `create`, `create_as`, `load_plugin`) returns `std::expected<T, Error>` instead of throwing.
 This follows directly from the plugin ABI boundary rule below (ADR-0005): if a plugin's entry points must never let a C++ exception escape across the `extern "C"` boundary, it would be inconsistent for the host side to treat exceptions as the normal control-flow mechanism. `Error` carries an `ErrorCode` plus a human-readable `detail` string for diagnostics — the role `what()` used to play, kept as data rather than as a throw/catch mechanism.
 
-The one deliberate exception to "no abrupt termination": `StartupResolver` is the single place in the system where failing loudly (`std::exit`) is correct — a composition root that can't resolve its mandatory dependencies has nothing useful left to do. Once the process is running, error handling goes back to `std::expected` at the point of use.
+The one deliberate exception to "no abrupt termination": the composition root, after asking `StartupResolver` for its mandatory dependencies, is the single place in the system where failing loudly (`std::exit`) is correct — a composition root that can't resolve its mandatory dependencies has nothing useful left to do. `StartupResolver` itself never exits; it collects the errors and the caller decides, based on `ok()`. Once the process is running, error handling goes back to `std::expected` at the point of use.
 
 ## ADR-0005 — The plugin ABI boundary is plain C
 

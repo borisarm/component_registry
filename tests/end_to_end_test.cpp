@@ -85,6 +85,22 @@ int main(int argc, char** argv) {
         std::cout << "--- summary() de ejemplo ---\n" << resolver.summary();
     }
 
+    // --- Caso de error: el plugin devuelve false al registrarse ------------
+    // Cargar el mismo .so otra vez hace que su register_factory() choque con
+    // duplicate_registration, así que component_plugin_register devuelve false.
+    {
+        auto reload = registry.load_plugin(plugin_path);
+        check(!reload.has_value(), "load_plugin() devuelve error si el registro del plugin falla");
+        check(reload.has_value() ||
+                  reload.error().code == component_registry::ErrorCode::plugin_registration_failed,
+              "el error reporta plugin_registration_failed");
+        check(registry.loaded_plugin_count() == 2,
+              "el handle se retiene aunque el registro haya fallado");
+        auto still_there = registry.create_as<IEchoService>("example.echo_service");
+        check(still_there.has_value() && (*still_there)->echo("x") == "echo: x",
+              "las fábricas ya registradas siguen funcionando tras el fallo");
+    }
+
     std::cout << "\n" << (failures == 0 ? "TODOS LOS TESTS PASARON" : "HUBO FALLOS") << "\n";
     return failures == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }

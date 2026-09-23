@@ -9,9 +9,6 @@ target_compile_options(example_repository_plugin PRIVATE
     -fvisibility=hidden
 )
 
-target_compile_definitions(example_repository_plugin PRIVATE
-    COMPONENT_PLUGIN_BUILDING
-)
 set_target_properties(example_repository_plugin PROPERTIES
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN ON

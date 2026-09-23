@@ -51,15 +51,23 @@ passed in by reference. From then on, the host asks the registry for a
 `std::shared_ptr<Interface>` — or a `std::expected` error it can act on,
 never an exception.
 
-## Architecture decisions
+## Documentation
 
-The project’s design decisions are tracked in [Documentation/ADR.md](Documentation/ADR.md).
+Full project documentation lives in [Documentation/](Documentation/README.md):
+
+- [Architecture](Documentation/Architecture.md): components, resolution lifecycle, thread safety and lifetime
+- [API reference](Documentation/API.md): `core.hpp`, `plugin_abi.hpp`, `startup.hpp`
+- [Writing a plugin](Documentation/PluginGuide.md): step-by-step guide and checklist
+- [Building and testing](Documentation/Building.md): requirements, CMake options, the end-to-end test
+- [Implementation status](Documentation/Status.md): what works, known defects, roadmap
+- [Architecture Decision Records](Documentation/ADR.md): why the design is the way it is
 
 
 ## Directory layout
 
 ```
 component_registry/
+├── Documentation/        # architecture, API, plugin guide, building, status, ADRs
 ├── include/component_registry/
 │   ├── core.hpp          # ComponentId, IComponent, Error, ComponentRegistry
 │   ├── plugin_abi.hpp    # extern "C" plugin contract + COMPONENT_REGISTRY_DEFINE_PLUGIN macro
@@ -81,7 +89,8 @@ component_registry/
 ## Building
 
 Requires a C++23 compiler with `<expected>` support (verified against
-GCC 13.3) and CMake ≥ 3.28.
+Clang 21.1.8 with libstdc++) and CMake ≥ 4.2. See
+[Documentation/Building.md](Documentation/Building.md) for options and details.
 
 ```sh
 mkdir build && cd build
@@ -141,11 +150,13 @@ COMPONENT_REGISTRY_DEFINE_PLUGIN {
 
 ## Status
 
-Core resolution cycle (register → create → `create_as` → `load_plugin` →
+The core resolution cycle (register → create → `create_as` → `load_plugin` →
 `StartupResolver`) is implemented and covered by an end-to-end test that
 exercises a real dynamically loaded `.so`, including the error paths
-(missing component, interface mismatch) and the symbol-visibility
-constraints (ADR-0006, ADR-0007).
+(missing component, interface mismatch, failed plugin registration) and
+cross-`.so` `dynamic_cast` (ADR-0006). The plugin symbol surface
+(ADR-0007) is verified by hand with `nm -D`, not by the test. See
+[Documentation/Status.md](Documentation/Status.md) for details.
 
 Not yet done:
 - vcpkg overlay port (`ports/component-registry/`) so another project can

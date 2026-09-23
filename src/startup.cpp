@@ -1,8 +1,11 @@
 #include <component_registry/startup.hpp>
 
 #include <sstream>
+#include <string_view>
 
 namespace component_registry {
+
+namespace {
 
     std::string_view code_name(ErrorCode code) {
         switch (code) {
@@ -13,9 +16,12 @@ namespace component_registry {
             case ErrorCode::plugin_symbol_missing:      return "plugin_symbol_missing";
             case ErrorCode::plugin_abi_incompatible:    return "plugin_abi_incompatible";
             case ErrorCode::plugin_registration_failed: return "plugin_registration_failed";
-            default: return "Unknown";
+            case ErrorCode::unknown_error:              return "unknown_error";
         }
-    }   
+        return "unknown_error";
+    }
+
+}  // namespace
 
     std::string StartupResolver::summary() const {
     if (errors_.empty()) {
